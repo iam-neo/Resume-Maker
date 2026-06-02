@@ -373,7 +373,7 @@ function BuilderWorkspace() {
         </div>
 
         {/* Right Panel: Live PDF Preview */}
-        <div className="w-full lg:w-[55%] flex flex-col bg-surface overflow-hidden print-area">
+        <div className="w-full lg:w-[55%] flex flex-col bg-surface overflow-hidden">
           <ResumePreview />
         </div>
       </div>

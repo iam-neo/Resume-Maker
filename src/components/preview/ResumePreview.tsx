@@ -115,9 +115,9 @@ export default function ResumePreview() {
       </div>
 
       {/* Preview Sheet Container */}
-      <div className="flex-1 overflow-auto bg-surface/50 p-6 flex justify-center items-start print-area">
+      <div className="flex-1 overflow-auto bg-surface/50 p-6 flex justify-center items-start">
         <div
-          className="resume-sheet print-area"
+          className="resume-sheet"
           style={{
             fontFamily: activeFont,
             transform: `scale(${zoom})`,
