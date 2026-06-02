@@ -340,12 +340,13 @@ body {
     break-before: avoid !important;
   }
 
-  /* Prevent awkward page breaks inside sections and list entries */
-  .resume-section {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
+  /* Prevent orphaned section headers at the bottom of pages */
+  .resume-sheet h3 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
+  /* Prevent awkward page breaks inside individual list/history entries */
   .resume-entry {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
