@@ -37,6 +37,13 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
     <div className="p-10 text-slate-800 flex flex-col h-full bg-white">
       {/* Centered Header */}
       <div className="text-center mb-6">
+        {personalInfo.profileImage && (
+          <img
+            src={personalInfo.profileImage}
+            alt={personalInfo.fullName || 'Profile'}
+            className="w-20 h-20 rounded-full object-cover border-2 border-slate-200 mx-auto mb-3 print:w-20 print:h-20"
+          />
+        )}
         <h1 
           className="font-bold tracking-tight uppercase mb-2"
           style={{ 

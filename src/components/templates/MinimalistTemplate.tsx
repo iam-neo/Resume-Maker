@@ -27,21 +27,30 @@ export default function MinimalistTemplate({ data, s }: TemplateProps) {
     <div className="p-8 text-slate-800 flex flex-col h-full bg-white">
       {/* Top Section: Name on Left, Contact Details on Right */}
       <div className="flex flex-col md:flex-row justify-between items-start border-b border-slate-100 pb-6 mb-6 gap-4">
-        <div>
-          <h1 
-            className="font-bold tracking-tight text-slate-800"
-            style={{ 
-              fontSize: s.text2xl === 'text-lg' ? '1.5rem' : s.text2xl === 'text-xl' ? '2.1rem' : '2.6rem'
-            }}
-          >
-            {personalInfo.fullName || 'Your Name'}
-          </h1>
-          <p 
-            className="font-medium text-slate-500 mt-1 uppercase tracking-wider"
-            style={{ fontSize: s.textBase }}
-          >
-            {personalInfo.jobTitle || 'Your Job Title'}
-          </p>
+        <div className="flex items-center gap-4">
+          {personalInfo.profileImage && (
+            <img
+              src={personalInfo.profileImage}
+              alt={personalInfo.fullName || 'Profile'}
+              className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 shrink-0 print:w-16 print:h-16"
+            />
+          )}
+          <div>
+            <h1 
+              className="font-bold tracking-tight text-slate-800"
+              style={{ 
+                fontSize: s.text2xl === 'text-lg' ? '1.5rem' : s.text2xl === 'text-xl' ? '2.1rem' : '2.6rem'
+              }}
+            >
+              {personalInfo.fullName || 'Your Name'}
+            </h1>
+            <p 
+              className="font-medium text-slate-500 mt-1 uppercase tracking-wider"
+              style={{ fontSize: s.textBase }}
+            >
+              {personalInfo.jobTitle || 'Your Job Title'}
+            </p>
+          </div>
         </div>
 
         {/* Contact panel: 2-column or list */}

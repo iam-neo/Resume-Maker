@@ -33,21 +33,32 @@ export default function ModernTemplate({ data, s }: TemplateProps) {
       
       {/* Name and Job Title */}
       <div className={`px-8 pt-8 pb-4 border-b border-slate-100`}>
-        <h1 
-          className="font-bold tracking-tight leading-none"
-          style={{ 
-            color: '#1e293b',
-            fontSize: s.text2xl === 'text-lg' ? '1.5rem' : s.text2xl === 'text-xl' ? '2rem' : '2.5rem'
-          }}
-        >
-          {personalInfo.fullName || 'Your Name'}
-        </h1>
-        <p 
-          className="font-medium mt-1.5"
-          style={{ color: themeColor, fontSize: s.textLg }}
-        >
-          {personalInfo.jobTitle || 'Your Job Title'}
-        </p>
+        <div className="flex items-center gap-5">
+          {personalInfo.profileImage && (
+            <img
+              src={personalInfo.profileImage}
+              alt={personalInfo.fullName || 'Profile'}
+              className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 shrink-0 print:w-16 print:h-16"
+            />
+          )}
+          <div>
+            <h1 
+              className="font-bold tracking-tight leading-none"
+              style={{ 
+                color: '#1e293b',
+                fontSize: s.text2xl === 'text-lg' ? '1.5rem' : s.text2xl === 'text-xl' ? '2rem' : '2.5rem'
+              }}
+            >
+              {personalInfo.fullName || 'Your Name'}
+            </h1>
+            <p 
+              className="font-medium mt-1.5"
+              style={{ color: themeColor, fontSize: s.textLg }}
+            >
+              {personalInfo.jobTitle || 'Your Job Title'}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Main Two-Column Content Area */}
