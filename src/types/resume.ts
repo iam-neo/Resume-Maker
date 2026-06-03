@@ -44,6 +44,7 @@ export interface Project {
 
 export type TemplateName = 'modern' | 'executive' | 'minimalist';
 export type SpacingOption = 'compact' | 'normal' | 'spacious';
+export type SectionId = 'summary' | 'experience' | 'projects' | 'education' | 'skills' | 'languages' | 'certifications';
 
 export interface ResumeData {
   personalInfo: PersonalInfo;
@@ -58,6 +59,7 @@ export interface ResumeData {
   fontFamily: string;
   spacing: SpacingOption;
   template: TemplateName;
+  sectionOrder?: SectionId[];
 }
 
 export const DEFAULT_RESUME_DATA: ResumeData = {
@@ -82,6 +84,7 @@ export const DEFAULT_RESUME_DATA: ResumeData = {
   fontFamily: 'Inter',
   spacing: 'normal',
   template: 'modern',
+  sectionOrder: ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications'],
 };
 
 export const SAMPLE_RESUME_DATA: ResumeData = {
@@ -187,4 +190,5 @@ export const SAMPLE_RESUME_DATA: ResumeData = {
   fontFamily: 'Inter',
   spacing: 'normal',
   template: 'modern',
+  sectionOrder: ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications'],
 };

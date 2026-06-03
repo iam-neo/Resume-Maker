@@ -10,6 +10,7 @@ import {
   Project,
   TemplateName,
   SpacingOption,
+  SectionId,
 } from '@/types/resume';
 
 interface ResumeContextType {
@@ -41,6 +42,9 @@ interface ResumeContextType {
   setThemeColor: (color: string) => void;
   setFontFamily: (font: string) => void;
   setSpacing: (spacing: SpacingOption) => void;
+  
+  updateSectionOrder: (order: SectionId[]) => void;
+  moveSection: (id: SectionId, direction: 'up' | 'down') => void;
 
   loadSampleData: () => void;
   resetData: () => void;
@@ -62,6 +66,9 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (!parsed.sectionOrder) {
+          parsed.sectionOrder = DEFAULT_RESUME_DATA.sectionOrder;
+        }
         setResumeData(parsed);
       }
     } catch {
@@ -281,6 +288,23 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     setResumeData((prev) => ({ ...prev, spacing }));
   }, []);
 
+  const updateSectionOrder = useCallback((order: SectionId[]) => {
+    setResumeData((prev) => ({ ...prev, sectionOrder: order }));
+  }, []);
+
+  const moveSection = useCallback((id: SectionId, direction: 'up' | 'down') => {
+    setResumeData((prev) => {
+      const order = prev.sectionOrder || DEFAULT_RESUME_DATA.sectionOrder || [];
+      const idx = order.indexOf(id);
+      if (idx === -1) return prev;
+      const newOrder = [...order];
+      const swap = direction === 'up' ? idx - 1 : idx + 1;
+      if (swap < 0 || swap >= newOrder.length) return prev;
+      [newOrder[idx], newOrder[swap]] = [newOrder[swap], newOrder[idx]];
+      return { ...prev, sectionOrder: newOrder };
+    });
+  }, []);
+
   // --- Data operations ---
   const loadSampleData = useCallback(() => {
     setResumeData(SAMPLE_RESUME_DATA);
@@ -306,6 +330,9 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     reader.onload = (e) => {
       try {
         const parsed = JSON.parse(e.target?.result as string);
+        if (!parsed.sectionOrder) {
+          parsed.sectionOrder = DEFAULT_RESUME_DATA.sectionOrder;
+        }
         setResumeData(parsed);
       } catch {
         alert('Invalid JSON file. Please select a valid resume data file.');
@@ -340,6 +367,8 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
         setThemeColor,
         setFontFamily,
         setSpacing,
+        updateSectionOrder,
+        moveSection,
         loadSampleData,
         resetData,
         exportJSON,
