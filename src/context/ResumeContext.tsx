@@ -16,6 +16,8 @@ interface ResumeContextType {
   resumeData: ResumeData;
   setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
   updatePersonalInfo: (field: string, value: string) => void;
+  updateProfileImage: (file: File) => void;
+  removeProfileImage: () => void;
   updateSummary: (value: string) => void;
 
   addWorkExperience: () => void;
@@ -84,6 +86,42 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     setResumeData((prev) => ({
       ...prev,
       personalInfo: { ...prev.personalInfo, [field]: value },
+    }));
+  }, []);
+
+  const updateProfileImage = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_SIZE = 300;
+        let w = img.width;
+        let h = img.height;
+        if (w > MAX_SIZE || h > MAX_SIZE) {
+          const ratio = Math.min(MAX_SIZE / w, MAX_SIZE / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        setResumeData((prev) => ({
+          ...prev,
+          personalInfo: { ...prev.personalInfo, profileImage: dataUrl },
+        }));
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  const removeProfileImage = useCallback(() => {
+    setResumeData((prev) => ({
+      ...prev,
+      personalInfo: { ...prev.personalInfo, profileImage: undefined },
     }));
   }, []);
 
@@ -282,6 +320,8 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
         resumeData,
         setResumeData,
         updatePersonalInfo,
+        updateProfileImage,
+        removeProfileImage,
         updateSummary,
         addWorkExperience,
         updateWorkExperience,
