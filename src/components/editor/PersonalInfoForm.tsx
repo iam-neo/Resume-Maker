@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { Linkedin, Github } from '@/components/icons/BrandIcons';
 
-
 const fields = [
   { key: 'fullName', label: 'Full Name', placeholder: 'John Doe', icon: User },
   { key: 'jobTitle', label: 'Job Title', placeholder: 'Senior Software Engineer', icon: User },
@@ -73,11 +72,10 @@ export default function PersonalInfoForm() {
           </div>
         ) : (
           <div
-            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer transition-all shrink-0 ${
-              isDragging
-                ? 'border-primary bg-primary/10'
-                : 'border-border hover:border-primary/50 hover:bg-surface-light'
-            }`}
+            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer transition-all shrink-0 ${isDragging
+              ? 'border-primary bg-primary/10'
+              : 'border-border hover:border-primary/50 hover:bg-surface-light'
+              }`}
             onClick={() => fileInputRef.current?.click()}
             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
             onDragLeave={() => setIsDragging(false)}

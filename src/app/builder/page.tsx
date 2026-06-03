@@ -9,6 +9,7 @@ import EducationForm from '@/components/editor/EducationForm';
 import ProjectsForm from '@/components/editor/ProjectsForm';
 import SkillsForm from '@/components/editor/SkillsForm';
 import ResumePreview from '@/components/preview/ResumePreview';
+import { SectionId } from '@/types/resume';
 import {
   FileText,
   Sparkles,
@@ -25,6 +26,7 @@ import {
   Wrench,
   Palette,
   ArrowLeft,
+  GripVertical,
 } from 'lucide-react';
 
 const COLORS = [
@@ -55,11 +57,51 @@ function BuilderWorkspace() {
     setThemeColor,
     setFontFamily,
     setSpacing,
+    updateSectionOrder,
+    moveSection,
     loadSampleData,
     resetData,
     exportJSON,
     importJSON,
   } = useResume();
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (isNaN(fromIndex) || fromIndex === toIndex) return;
+
+    const order = [...(resumeData.sectionOrder || ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications'])];
+    const [moved] = order.splice(fromIndex, 1);
+    order.splice(toIndex, 0, moved);
+    updateSectionOrder(order);
+  };
+
+  const isSectionActive = (id: string) => {
+    switch (id) {
+      case 'summary': return !!resumeData.summary;
+      case 'experience': return resumeData.workExperience.length > 0;
+      case 'projects': return resumeData.projects.length > 0;
+      case 'education': return resumeData.education.length > 0;
+      case 'skills': return resumeData.skills.length > 0;
+      case 'languages': return resumeData.languages.length > 0;
+      case 'certifications': return resumeData.certifications.length > 0;
+      default: return false;
+    }
+  };
+
+  const SECTION_NAMES: Record<string, string> = {
+    summary: 'Professional Summary',
+    experience: 'Work Experience',
+    projects: 'Key Projects',
+    education: 'Education',
+    skills: 'Skills',
+    languages: 'Languages',
+    certifications: 'Certifications',
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -264,6 +306,65 @@ function BuilderWorkspace() {
                       <option value="normal">Normal</option>
                       <option value="spacious">Spacious</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Section Reordering */}
+                <div className="border-t border-border/40 pt-4">
+                  <label className="input-label mb-2 flex items-center justify-between">
+                    <span>Section Display Order</span>
+                    <span className="text-[10px] text-text-muted">Drag or use arrows</span>
+                  </label>
+                  
+                  <div className="space-y-2">
+                    {(resumeData.sectionOrder || ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications']).map((id, index, arr) => {
+                      const active = isSectionActive(id);
+                      return (
+                        <div
+                          key={id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, index)}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => handleDrop(e, index)}
+                          className="flex items-center justify-between p-2 rounded-lg bg-surface border border-border hover:border-border-light transition-all cursor-grab active:cursor-grabbing group"
+                        >
+                          <div className="flex items-center gap-2">
+                            <GripVertical className="w-3.5 h-3.5 text-text-muted shrink-0 cursor-grab" />
+                            <span className="text-xs font-semibold text-text-primary">
+                              {SECTION_NAMES[id]}
+                            </span>
+                            <span 
+                              className={`w-1.5 h-1.5 rounded-full shrink-0 ${active ? 'bg-emerald-500' : 'bg-slate-400'}`} 
+                              title={active ? 'Active (shows on resume)' : 'Empty (hidden from resume)'} 
+                            />
+                            <span className="text-[9px] text-text-muted hidden sm:inline">
+                              {active ? 'Active' : 'Empty'}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center gap-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <button
+                              type="button"
+                              onClick={() => moveSection(id as any, 'up')}
+                              disabled={index === 0}
+                              className="p-1 rounded hover:bg-surface-light disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                              title="Move up"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveSection(id as any, 'down')}
+                              disabled={index === arr.length - 1}
+                              className="p-1 rounded hover:bg-surface-light disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                              title="Move down"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
