@@ -4,7 +4,6 @@ import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Globe } from 'lucide-react';
 import { Linkedin, Github } from '@/components/icons/BrandIcons';
 
-
 interface TemplateProps {
   data: ResumeData;
   s: any; // Spacing settings
@@ -33,54 +32,14 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
     personalInfo.github && { label: personalInfo.github, icon: Github },
   ].filter(Boolean) as { label: string; icon: any }[];
 
-  return (
-    <div className="p-10 text-slate-800 flex flex-col h-full bg-white">
-      {/* Centered Header */}
-      <div className="text-center mb-6">
-        {personalInfo.profileImage && (
-          <img
-            src={personalInfo.profileImage}
-            alt={personalInfo.fullName || 'Profile'}
-            className="w-20 h-20 rounded-full object-cover border-2 border-slate-200 mx-auto mb-3 print:w-20 print:h-20"
-          />
-        )}
-        <h1 
-          className="font-bold tracking-tight uppercase mb-2"
-          style={{ 
-            color: '#1e293b',
-            fontSize: s.text2xl === 'text-lg' ? '1.75rem' : s.text2xl === 'text-xl' ? '2.25rem' : '2.75rem',
-            fontFamily: 'inherit'
-          }}
-        >
-          {personalInfo.fullName || 'Your Name'}
-        </h1>
-        <p 
-          className="font-semibold uppercase tracking-wider mb-3"
-          style={{ color: themeColor, fontSize: s.textLg }}
-        >
-          {personalInfo.jobTitle || 'Your Job Title'}
-        </p>
-        
-        {/* Contact info list with bullet separators */}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-slate-500 font-medium max-w-2xl mx-auto" style={{ fontSize: s.textBase }}>
-          {contactItems.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-1.5">
-              <item.icon className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-              <span>{item.label}</span>
-              {idx < contactItems.length - 1 && (
-                <span className="text-slate-300 ml-2 select-none">&bull;</span>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+  const renderedGroupedSkills = { current: false };
 
-      {/* Accordion Sections in Full Width */}
-      <div className="flex flex-col gap-6">
-        
-        {/* Summary */}
-        {summary && (
-          <div className="resume-section">
+  const renderSection = (id: string) => {
+    switch (id) {
+      case 'summary':
+        if (!summary) return null;
+        return (
+          <div key="summary" className="resume-section">
             <h3 
               className="font-bold uppercase tracking-wider mb-1.5 border-b-2 pb-0.5" 
               style={{ color: themeColor, borderBottomColor: themeColor, fontSize: s.textBase }}
@@ -91,11 +50,11 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
               {summary}
             </p>
           </div>
-        )}
-
-        {/* Work Experience */}
-        {workExperience && workExperience.length > 0 && (
-          <div className="resume-section">
+        );
+      case 'experience':
+        if (!workExperience || workExperience.length === 0) return null;
+        return (
+          <div key="experience" className="resume-section">
             <h3 
               className="font-bold uppercase tracking-wider mb-3 border-b-2 pb-0.5" 
               style={{ color: themeColor, borderBottomColor: themeColor, fontSize: s.textBase }}
@@ -132,11 +91,11 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Projects */}
-        {projects && projects.length > 0 && (
-          <div className="resume-section">
+        );
+      case 'projects':
+        if (!projects || projects.length === 0) return null;
+        return (
+          <div key="projects" className="resume-section">
             <h3 
               className="font-bold uppercase tracking-wider mb-3 border-b-2 pb-0.5" 
               style={{ color: themeColor, borderBottomColor: themeColor, fontSize: s.textBase }}
@@ -182,11 +141,11 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Education */}
-        {education && education.length > 0 && (
-          <div className="resume-section">
+        );
+      case 'education':
+        if (!education || education.length === 0) return null;
+        return (
+          <div key="education" className="resume-section">
             <h3 
               className="font-bold uppercase tracking-wider mb-3 border-b-2 pb-0.5" 
               style={{ color: themeColor, borderBottomColor: themeColor, fontSize: s.textBase }}
@@ -221,11 +180,15 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
               ))}
             </div>
           </div>
-        )}
-
-        {/* Skills, Languages & Certifications Grid */}
-        {(skills.length > 0 || languages.length > 0 || certifications.length > 0) && (
-          <div className="resume-section">
+        );
+      case 'skills':
+      case 'languages':
+      case 'certifications': {
+        if (renderedGroupedSkills.current) return null;
+        if (skills.length === 0 && languages.length === 0 && certifications.length === 0) return null;
+        renderedGroupedSkills.current = true;
+        return (
+          <div key="grouped-skills" className="resume-section">
             <h3 
               className="font-bold uppercase tracking-wider mb-3 border-b-2 pb-0.5" 
               style={{ color: themeColor, borderBottomColor: themeColor, fontSize: s.textBase }}
@@ -253,8 +216,58 @@ export default function ExecutiveTemplate({ data, s }: TemplateProps) {
               )}
             </div>
           </div>
-        )}
+        );
+      }
+      default:
+        return null;
+    }
+  };
 
+  return (
+    <div className="p-10 text-slate-800 flex flex-col h-full bg-white">
+      {/* Centered Header */}
+      <div className="text-center mb-6">
+        {personalInfo.profileImage && (
+          <img
+            src={personalInfo.profileImage}
+            alt={personalInfo.fullName || 'Profile'}
+            className="w-20 h-20 rounded-full object-cover border-2 border-slate-200 mx-auto mb-3 print:w-20 print:h-20"
+          />
+        )}
+        <h1 
+          className="font-bold tracking-tight uppercase mb-2"
+          style={{ 
+            color: '#1e293b',
+            fontSize: s.text2xl === 'text-lg' ? '1.75rem' : s.text2xl === 'text-xl' ? '2.25rem' : '2.75rem',
+            fontFamily: 'inherit'
+          }}
+        >
+          {personalInfo.fullName || 'Your Name'}
+        </h1>
+        <p 
+          className="font-semibold uppercase tracking-wider mb-3"
+          style={{ color: themeColor, fontSize: s.textLg }}
+        >
+          {personalInfo.jobTitle || 'Your Job Title'}
+        </p>
+        
+        {/* Contact info list with bullet separators */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-slate-500 font-medium max-w-2xl mx-auto" style={{ fontSize: s.textBase }}>
+          {contactItems.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-1.5">
+              <item.icon className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+              <span>{item.label}</span>
+              {idx < contactItems.length - 1 && (
+                <span className="text-slate-300 ml-2 select-none">&bull;</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Accordion Sections in Full Width */}
+      <div className="flex flex-col gap-6">
+        {(data.sectionOrder || ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications']).map((id) => renderSection(id))}
       </div>
     </div>
   );

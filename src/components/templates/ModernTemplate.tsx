@@ -111,212 +111,243 @@ export default function ModernTemplate({ data, s }: TemplateProps) {
             </ul>
           </div>
 
-          {/* Skills */}
-          {skills && skills.length > 0 && (
-            <div>
-              <h3 className="font-semibold uppercase tracking-wider text-slate-600 mb-3 border-b border-slate-200 pb-1" style={{ fontSize: s.textBase }}>
-                Skills
-              </h3>
-              <div className="flex flex-wrap gap-1.5">
-                {skills.map((skill, index) => (
-                  <span 
-                    key={index} 
-                    className="px-2 py-0.5 rounded text-slate-700 bg-slate-200/60 font-medium"
-                    style={{ fontSize: '0.7rem' }}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Dynamic Sidebar Sections */}
+          {(() => {
+            const sidebarSectionIds = ['skills', 'languages', 'certifications'];
+            const order = data.sectionOrder || ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications'];
+            const orderedSidebar = sidebarSectionIds
+              .filter(id => order.includes(id as any))
+              .sort((a, b) => order.indexOf(a as any) - order.indexOf(b as any));
 
-          {/* Languages */}
-          {languages && languages.length > 0 && (
-            <div>
-              <h3 className="font-semibold uppercase tracking-wider text-slate-600 mb-3 border-b border-slate-200 pb-1" style={{ fontSize: s.textBase }}>
-                Languages
-              </h3>
-              <ul className="space-y-1 text-slate-600" style={{ fontSize: s.textBase }}>
-                {languages.map((lang, index) => (
-                  <li key={index} className="bullet-item">{lang}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Certifications */}
-          {certifications && certifications.length > 0 && (
-            <div>
-              <h3 className="font-semibold uppercase tracking-wider text-slate-600 mb-3 border-b border-slate-200 pb-1" style={{ fontSize: s.textBase }}>
-                Certifications
-              </h3>
-              <ul className="space-y-2 text-slate-600" style={{ fontSize: s.textBase }}>
-                {certifications.map((cert, index) => (
-                  <li key={index} className="leading-snug">
-                    {cert}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            return orderedSidebar.map(id => {
+              switch (id) {
+                case 'skills':
+                  if (!skills || skills.length === 0) return null;
+                  return (
+                    <div key="skills">
+                      <h3 className="font-semibold uppercase tracking-wider text-slate-600 mb-3 border-b border-slate-200 pb-1" style={{ fontSize: s.textBase }}>
+                        Skills
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {skills.map((skill, index) => (
+                          <span 
+                            key={index} 
+                            className="px-2 py-0.5 rounded text-slate-700 bg-slate-200/60 font-medium"
+                            style={{ fontSize: '0.7rem' }}
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                case 'languages':
+                  if (!languages || languages.length === 0) return null;
+                  return (
+                    <div key="languages">
+                      <h3 className="font-semibold uppercase tracking-wider text-slate-600 mb-3 border-b border-slate-200 pb-1" style={{ fontSize: s.textBase }}>
+                        Languages
+                      </h3>
+                      <ul className="space-y-1 text-slate-600" style={{ fontSize: s.textBase }}>
+                        {languages.map((lang, index) => (
+                          <li key={index} className="bullet-item">{lang}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                case 'certifications':
+                  if (!certifications || certifications.length === 0) return null;
+                  return (
+                    <div key="certifications">
+                      <h3 className="font-semibold uppercase tracking-wider text-slate-600 mb-3 border-b border-slate-200 pb-1" style={{ fontSize: s.textBase }}>
+                        Certifications
+                      </h3>
+                      <ul className="space-y-2 text-slate-600" style={{ fontSize: s.textBase }}>
+                        {certifications.map((cert, index) => (
+                          <li key={index} className="leading-snug">
+                            {cert}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                default:
+                  return null;
+              }
+            });
+          })()}
         </div>
 
-        {/* Right Column - Main Content (Experience, Projects, Education) */}
+        {/* Right Column - Main Content */}
         <div className="w-[67%] p-6 flex flex-col gap-6">
-          {/* Summary */}
-          {summary && (
-            <div>
-              <h3 
-                className="font-bold uppercase tracking-wider mb-2 pb-1 border-b border-slate-100" 
-                style={{ color: themeColor, fontSize: s.textBase }}
-              >
-                Summary
-              </h3>
-              <p className="text-slate-600 leading-relaxed text-justify" style={{ fontSize: s.textBase }}>
-                {summary}
-              </p>
-            </div>
-          )}
+          {(() => {
+            const mainSectionIds = ['summary', 'experience', 'projects', 'education'];
+            const order = data.sectionOrder || ['summary', 'experience', 'projects', 'education', 'skills', 'languages', 'certifications'];
+            const orderedMain = mainSectionIds
+              .filter(id => order.includes(id as any))
+              .sort((a, b) => order.indexOf(a as any) - order.indexOf(b as any));
 
-          {/* Work Experience */}
-          {workExperience && workExperience.length > 0 && (
-            <div>
-              <h3 
-                className="font-bold uppercase tracking-wider mb-3 pb-1 border-b border-slate-100" 
-                style={{ color: themeColor, fontSize: s.textBase }}
-              >
-                Experience
-              </h3>
-              <div className={s.entryGap}>
-                {workExperience.map((exp) => (
-                  <div key={exp.id} className="resume-entry">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-bold text-slate-800" style={{ fontSize: s.textLg }}>
-                          {exp.position}
-                        </h4>
-                        <span className="font-semibold text-slate-600" style={{ fontSize: s.textBase }}>
-                          {exp.company}
-                        </span>
-                      </div>
-                      <div className="text-right text-slate-500" style={{ fontSize: s.textBase }}>
-                        <div className="flex items-center gap-1 justify-end font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          <span>
-                            {formatDate(exp.startDate)} &ndash; {exp.current ? 'Present' : formatDate(exp.endDate)}
-                          </span>
-                        </div>
-                        <span className="text-xs">{exp.location}</span>
-                      </div>
-                    </div>
-                    {exp.description && exp.description.length > 0 && (
-                      <ul className="list-disc list-outside ml-4 mt-2 space-y-1 text-slate-600" style={{ fontSize: s.textBase }}>
-                        {exp.description.map((bullet, idx) => (
-                          bullet.trim() && <li key={idx}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Projects */}
-          {projects && projects.length > 0 && (
-            <div>
-              <h3 
-                className="font-bold uppercase tracking-wider mb-3 pb-1 border-b border-slate-100" 
-                style={{ color: themeColor, fontSize: s.textBase }}
-              >
-                Projects
-              </h3>
-              <div className={s.entryGap}>
-                {projects.map((proj) => (
-                  <div key={proj.id} className="resume-entry">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-bold text-slate-800 flex items-center gap-1.5" style={{ fontSize: s.textLg }}>
-                          {proj.name}
-                          {proj.link && (
-                            <span className="text-xs font-normal text-slate-400 lowercase">
-                              ({proj.link})
-                            </span>
-                          )}
-                        </h4>
-                        <span className="text-slate-600 font-medium" style={{ fontSize: s.textBase }}>
-                          {proj.role}
-                        </span>
-                      </div>
-                      {proj.technologies && proj.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-1 max-w-[200px] justify-end">
-                          {proj.technologies.map((tech, tIdx) => (
-                            <span 
-                              key={tIdx} 
-                              className="px-1.5 py-0.5 rounded text-slate-600 bg-slate-100 font-medium"
-                              style={{ fontSize: '0.65rem' }}
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    {proj.description && proj.description.length > 0 && (
-                      <ul className="list-disc list-outside ml-4 mt-2 space-y-1 text-slate-600" style={{ fontSize: s.textBase }}>
-                        {proj.description.map((bullet, idx) => (
-                          bullet.trim() && <li key={idx}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Education */}
-          {education && education.length > 0 && (
-            <div>
-              <h3 
-                className="font-bold uppercase tracking-wider mb-3 pb-1 border-b border-slate-100" 
-                style={{ color: themeColor, fontSize: s.textBase }}
-              >
-                Education
-              </h3>
-              <div className={s.entryGap}>
-                {education.map((edu) => (
-                  <div key={edu.id} className="resume-entry">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-bold text-slate-800" style={{ fontSize: s.textLg }}>
-                          {edu.degree}
-                        </h4>
-                        <span className="font-semibold text-slate-600" style={{ fontSize: s.textBase }}>
-                          {edu.school} {edu.gpa && `(GPA: ${edu.gpa})`}
-                        </span>
-                      </div>
-                      <div className="text-right text-slate-500" style={{ fontSize: s.textBase }}>
-                        <div className="flex items-center gap-1 justify-end font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          <span>
-                            {formatDate(edu.startDate)} &ndash; {edu.current ? 'Present' : formatDate(edu.endDate)}
-                          </span>
-                        </div>
-                        <span className="text-xs">{edu.location}</span>
-                      </div>
-                    </div>
-                    {edu.description && (
-                      <p className="text-slate-600 mt-1.5 text-sm" style={{ fontSize: s.textBase }}>
-                        {edu.description}
+            return orderedMain.map(id => {
+              switch (id) {
+                case 'summary':
+                  if (!summary) return null;
+                  return (
+                    <div key="summary">
+                      <h3 
+                        className="font-bold uppercase tracking-wider mb-2 pb-1 border-b border-slate-100" 
+                        style={{ color: themeColor, fontSize: s.textBase }}
+                      >
+                        Summary
+                      </h3>
+                      <p className="text-slate-600 leading-relaxed text-justify" style={{ fontSize: s.textBase }}>
+                        {summary}
                       </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                    </div>
+                  );
+                case 'experience':
+                  if (!workExperience || workExperience.length === 0) return null;
+                  return (
+                    <div key="experience">
+                      <h3 
+                        className="font-bold uppercase tracking-wider mb-3 pb-1 border-b border-slate-100" 
+                        style={{ color: themeColor, fontSize: s.textBase }}
+                      >
+                        Experience
+                      </h3>
+                      <div className={s.entryGap}>
+                        {workExperience.map((exp) => (
+                          <div key={exp.id} className="resume-entry">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h4 className="font-bold text-slate-800" style={{ fontSize: s.textLg }}>
+                                  {exp.position}
+                                </h4>
+                                <span className="font-semibold text-slate-600" style={{ fontSize: s.textBase }}>
+                                  {exp.company}
+                                </span>
+                              </div>
+                              <div className="text-right text-slate-500" style={{ fontSize: s.textBase }}>
+                                <div className="flex items-center gap-1 justify-end font-medium">
+                                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>
+                                    {formatDate(exp.startDate)} &ndash; {exp.current ? 'Present' : formatDate(exp.endDate)}
+                                  </span>
+                                </div>
+                                <span className="text-xs">{exp.location}</span>
+                              </div>
+                            </div>
+                            {exp.description && exp.description.length > 0 && (
+                              <ul className="list-disc list-outside ml-4 mt-2 space-y-1 text-slate-600" style={{ fontSize: s.textBase }}>
+                                {exp.description.map((bullet, idx) => (
+                                  bullet.trim() && <li key={idx}>{bullet}</li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                case 'projects':
+                  if (!projects || projects.length === 0) return null;
+                  return (
+                    <div key="projects">
+                      <h3 
+                        className="font-bold uppercase tracking-wider mb-3 pb-1 border-b border-slate-100" 
+                        style={{ color: themeColor, fontSize: s.textBase }}
+                      >
+                        Projects
+                      </h3>
+                      <div className={s.entryGap}>
+                        {projects.map((proj) => (
+                          <div key={proj.id} className="resume-entry">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h4 className="font-bold text-slate-800 flex items-center gap-1.5" style={{ fontSize: s.textLg }}>
+                                  {proj.name}
+                                  {proj.link && (
+                                    <span className="text-xs font-normal text-slate-400 lowercase">
+                                      ({proj.link})
+                                    </span>
+                                  )}
+                                </h4>
+                                <span className="text-slate-600 font-medium" style={{ fontSize: s.textBase }}>
+                                  {proj.role}
+                                </span>
+                              </div>
+                              {proj.technologies && proj.technologies.length > 0 && (
+                                <div className="flex flex-wrap gap-1 max-w-[200px] justify-end">
+                                  {proj.technologies.map((tech, tIdx) => (
+                                    <span 
+                                      key={tIdx} 
+                                      className="px-1.5 py-0.5 rounded text-slate-600 bg-slate-100 font-medium"
+                                      style={{ fontSize: '0.65rem' }}
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            {proj.description && proj.description.length > 0 && (
+                              <ul className="list-disc list-outside ml-4 mt-2 space-y-1 text-slate-600" style={{ fontSize: s.textBase }}>
+                                    {proj.description.map((bullet, idx) => (
+                                      bullet.trim() && <li key={idx}>{bullet}</li>
+                                    ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                case 'education':
+                  if (!education || education.length === 0) return null;
+                  return (
+                    <div key="education">
+                      <h3 
+                        className="font-bold uppercase tracking-wider mb-3 pb-1 border-b border-slate-100" 
+                        style={{ color: themeColor, fontSize: s.textBase }}
+                      >
+                        Education
+                      </h3>
+                      <div className={s.entryGap}>
+                        {education.map((edu) => (
+                          <div key={edu.id} className="resume-entry">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h4 className="font-bold text-slate-800" style={{ fontSize: s.textLg }}>
+                                  {edu.degree}
+                                </h4>
+                                <span className="font-semibold text-slate-600" style={{ fontSize: s.textBase }}>
+                                  {edu.school} {edu.gpa && `(GPA: ${edu.gpa})`}
+                                </span>
+                              </div>
+                              <div className="text-right text-slate-500" style={{ fontSize: s.textBase }}>
+                                <div className="flex items-center gap-1 justify-end font-medium">
+                                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>
+                                    {formatDate(edu.startDate)} &ndash; {edu.current ? 'Present' : formatDate(edu.endDate)}
+                                  </span>
+                                </div>
+                                <span className="text-xs">{edu.location}</span>
+                              </div>
+                            </div>
+                            {edu.description && (
+                              <p className="text-slate-600 mt-1.5 text-sm" style={{ fontSize: s.textBase }}>
+                                {edu.description}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                default:
+                  return null;
+              }
+            });
+          })()}
         </div>
       </div>
     </div>
