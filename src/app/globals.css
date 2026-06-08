@@ -297,7 +297,6 @@ body {
     padding: 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    color-adjust: exact !important;
   }
 
   /* Reset flex layout and overflow constraints on all ancestor containers of the resume sheet */
